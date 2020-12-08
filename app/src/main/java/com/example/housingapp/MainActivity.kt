@@ -82,30 +82,8 @@ class MainActivity : AppCompatActivity() {
             showOrHideViews(listOf(welcomeView,descriptionView,browseButton), false)
         }
 
-
-//        for(i:Int in 0 until supportFragmentManager.backStackEntryCount){
-//            if(i > 1){
-//                supportFragmentManager.popBackStackImmediate()
-//            }
-//        }
-
-//        if(supportFragmentManager.backStackEntryCount > 1){
-//
-//            supportFragmentManager.getBackStackEntryAt(1)
-//        }
-
-//        supportFragmentManager.popBackStack()
-
         //Make sure it will still run normally
         super.onBackPressed()
-    }
-
-    //Function to show selected fragment, and choose if it should be added to back-stack or not.
-    fun showFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
-        if(addToBackStack){
-            supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
-        }
-        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
     }
 
     //Create a function to show or hide a list of views.
@@ -118,10 +96,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun removeFragment(fragmentToRemove:Fragment){
-        supportFragmentManager.beginTransaction().remove(fragmentToRemove).commit()
-//        supportFragmentManager.popBackStack()
+    //Function to show selected fragment, and choose if it should be added to back-stack or not.
+    fun showFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
+        if(addToBackStack){
+            supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
+        }
+        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
     }
-
 
 }

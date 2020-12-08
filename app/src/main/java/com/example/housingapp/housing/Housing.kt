@@ -1,8 +1,5 @@
 package com.example.housingapp.housing
 
-//class Housing(val images:MutableList<String>, val address:String, val type: HousingType, val price:Double, val amenities:List<String>, val size:Int) {
-//}
-
 class Housing(val address: String, val price:Double, val type:HousingType, val amenities:List<Amenities>, val images: MutableList<String>, val rentPayment: RentPayment? = null)
 
 enum class HousingType{
@@ -30,5 +27,6 @@ enum class RentPayment{
     Weekend,
     Weekly,
     Fortnight,
-    Monthly
+    Monthly,
+    Yearly
 }

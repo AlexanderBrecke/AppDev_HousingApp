@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_housing_add.view.*
 
 class HousingAddFragment(private val createNewListingListener: ICreateNewListingListener):Fragment() {
 
-    //Setup some values we can use
+    //Setup some values we will use
     private lateinit var dropDown:Spinner
     private val housingTypes:MutableList<HousingType> = mutableListOf()
 
@@ -52,10 +52,8 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
             housingTypes.add(type)
         }
 
-
         return view
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,7 +95,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
     //Create a function to create a new listing.
     private fun createNewListing(){
 
-        //Setup the needed variables for creating a housing
+        //Setup the needed variables for creating a house listing
         var houseAddress:String? = null
         var housePrice:Double?  = null
         var housingType:HousingType = HousingType.Room
@@ -132,14 +130,12 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
 
         //Check that all information needed is present to create a housing
         if(houseAddress != null && housePrice != null){
-
-            val newHousing:Housing = Housing(houseAddress,housePrice,housingType,houseAmenities,housePhotos)
+            val newHousing = Housing(houseAddress,housePrice,housingType,houseAmenities,housePhotos)
             createNewListingListener.createNewListing(newHousing)
             onDestroy()
         }
         //If not, tell the user that information is needed
         else Toast.makeText(context,"You need to fill in an address and a price",Toast.LENGTH_SHORT).show()
-
 
     }
 

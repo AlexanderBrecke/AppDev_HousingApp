@@ -159,8 +159,8 @@ class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyc
         Toast.makeText(context,"Deleted ${housingToRemove.address}", Toast.LENGTH_SHORT).show()
     }
 
-    //Using event listener interface to create new listing from housing add fragment
-    //Add the new listing to the original housings list, and then clear all searches
+    //Using event listener interface to create new listing from housing add fragment.
+    //Here we will add the new listing to the original housings list, and then clear all searches
     //Update the reference list to again show all houses, including the newly added listing.
     //Make the function call the back press, as this is being called in another fragment and we want to go back to the list fragment at this point.
     override fun createNewListing(newHousing: Housing) {
