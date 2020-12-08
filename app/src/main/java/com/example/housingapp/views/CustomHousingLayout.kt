@@ -28,7 +28,6 @@ class CustomHousingLayout(context: Context, attributeSet: AttributeSet?=null):Fr
         imageView = view.icon_image
         crossImageView = view.crossImage
 
-
         Picasso.get().load("https://www.freeiconspng.com/uploads/dark-red-x-png-5.png").into(crossImageView)
     }
 
@@ -42,7 +41,6 @@ class CustomHousingLayout(context: Context, attributeSet: AttributeSet?=null):Fr
 
     fun setImage(imageUrl:String){
         Picasso.get().load(imageUrl).into(imageView)
-//        Picasso.with(context).load(imageUrl).fit().centerCrop().into(imageView)
     }
 
 

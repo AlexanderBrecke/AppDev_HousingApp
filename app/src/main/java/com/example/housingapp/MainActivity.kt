@@ -1,6 +1,5 @@
 package com.example.housingapp
 
-import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -8,33 +7,34 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.housingapp.Interfaces.IFragmentChangeEventListener
 import com.example.housingapp.fragments.HousingListFragment
+import com.example.housingapp.housing.Amenities
+import com.example.housingapp.housing.Housing
+import com.example.housingapp.housing.HousingType
+import com.example.housingapp.housing.RentPayment
 
-class MainActivity : AppCompatActivity(), IFragmentChangeEventListener {
+class MainActivity : AppCompatActivity() {
 
     private val housingList: MutableList<Housing> = mutableListOf()
     private val cabinInTheWoods = Housing(
-        mutableListOf(
-            "https://fanart.tv/fanart/movies/22970/moviebackground/the-cabin-in-the-woods-505e68fc36f67.jpg"
-        ),
-        "Dark forest road 666", HousingType.Cabin,
-        666.666,
-        listOf("Well", "Fireplace", "Creaking wooden floors", "Cellar full of cursed items"),
-        60
+            "Dark forest road 666",
+            666.666,
+            HousingType.Cabin,
+            listOf(Amenities.Water, Amenities.Electricity, Amenities.Fireplace),
+            mutableListOf("https://fanart.tv/fanart/movies/22970/moviebackground/the-cabin-in-the-woods-505e68fc36f67.jpg"),
+            RentPayment.Fortnight
     )
 
     private val hotelRoom1 = Housing(
-        mutableListOf(
-            "https://www.movie-locations.com/movies/s/Shining-Timberline-Lodge.jpg",
-            "https://www.themarysue.com/wp-content/uploads/2014/07/OverlookHotelShining.png"
-        ),
-        "27500 West Leg Road",
-        HousingType.Room,
-        66.6,
-        listOf("Dead person in the bath, water, electricity, free wi-fi, nice neighbours"),
-        18
+            "27500 West Leg Road",
+            66.6,
+            HousingType.Room,
+            listOf(Amenities.Electricity, Amenities.Water, Amenities.Heating, Amenities.WiFi),
+            mutableListOf("https://www.movie-locations.com/movies/s/Shining-Timberline-Lodge.jpg", "https://www.themarysue.com/wp-content/uploads/2014/07/OverlookHotelShining.png"),
+            RentPayment.Daily
     )
+
+
 
     //Setting up some values for views.
     private lateinit var containerView:FrameLayout
@@ -82,16 +82,30 @@ class MainActivity : AppCompatActivity(), IFragmentChangeEventListener {
             showOrHideViews(listOf(welcomeView,descriptionView,browseButton), false)
         }
 
+
+//        for(i:Int in 0 until supportFragmentManager.backStackEntryCount){
+//            if(i > 1){
+//                supportFragmentManager.popBackStackImmediate()
+//            }
+//        }
+
+//        if(supportFragmentManager.backStackEntryCount > 1){
+//
+//            supportFragmentManager.getBackStackEntryAt(1)
+//        }
+
+//        supportFragmentManager.popBackStack()
+
         //Make sure it will still run normally
         super.onBackPressed()
     }
 
     //Function to show selected fragment, and choose if it should be added to back-stack or not.
-    private fun showFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
+    fun showFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
         if(addToBackStack){
             supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
         }
-        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commitNow()
+        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
     }
 
     //Create a function to show or hide a list of views.
@@ -104,9 +118,9 @@ class MainActivity : AppCompatActivity(), IFragmentChangeEventListener {
         }
     }
 
-    //
-    override fun fragmentShouldChange(fragment: Fragment, addToBackStack: Boolean) {
-        showFragment(fragment, addToBackStack)
+    fun removeFragment(fragmentToRemove:Fragment){
+        supportFragmentManager.beginTransaction().remove(fragmentToRemove).commit()
+//        supportFragmentManager.popBackStack()
     }
 
 

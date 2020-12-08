@@ -12,14 +12,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.housingapp.Housing
+import com.example.housingapp.Interfaces.ICreateNewListingListener
+import com.example.housingapp.housing.Housing
 import com.example.housingapp.Interfaces.IRecyclerViewEventListener
 import com.example.housingapp.MainActivity
 import com.example.housingapp.R
 import com.example.housingapp.recycler.HousingListAdapter
 import kotlinx.android.synthetic.main.fragment_housing_list.view.*
 
-class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyclerViewEventListener {
+class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyclerViewEventListener, ICreateNewListingListener {
 
     //Create variables for the recycler view, recycler adapter and recycler layout manager.
     private lateinit var recyclerView: RecyclerView
@@ -32,6 +33,9 @@ class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyc
 
     //Create a reference housing list that we can manipulate without losing data
     private val referenceHousingList:MutableList<Housing> = mutableListOf()
+
+    //Create a value for the fragment to add houses
+    private val housingAddFragment:HousingAddFragment = HousingAddFragment(this)
 
 
     //Initialize the fragment
@@ -73,8 +77,9 @@ class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyc
 
         //Initialize add button
         addHousingButton = view.addHousing_button
+        //Set an on click listener to take you to the add housing fragment
         addHousingButton.setOnClickListener {
-
+            (activity as MainActivity).showFragment(housingAddFragment, true)
         }
 
         return view
@@ -130,6 +135,12 @@ class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyc
         return filteredList
     }
 
+    //Create a way to clear any searches
+    private fun clearAllSearches(){
+        searchBar.text = null
+        updateReferenceList(housings)
+    }
+
     //Using the event listener interface for the recycler view override the on cell click listener
     //Here we want to go to a housing fragment showing the information of the clicked housing
     override fun onCellClickListener(housingList: MutableList<Housing>, position: Int) {
@@ -145,7 +156,18 @@ class HousingListFragment(val housings:MutableList<Housing>): Fragment(), IRecyc
         housings.remove(housingToRemove)
         referenceHousingList.remove(housingToRemove)
         recyclerAdapter.notifyDataSetChanged()
-        Toast.makeText(context,"${housingList[0].address}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context,"Deleted ${housingToRemove.address}", Toast.LENGTH_SHORT).show()
+    }
+
+    //Using event listener interface to create new listing from housing add fragment
+    //Add the new listing to the original housings list, and then clear all searches
+    //Update the reference list to again show all houses, including the newly added listing.
+    //Make the function call the back press, as this is being called in another fragment and we want to go back to the list fragment at this point.
+    override fun createNewListing(newHousing: Housing) {
+        Toast.makeText(context,"Got new information about ${newHousing.address}", Toast.LENGTH_SHORT).show()
+        housings.add(newHousing)
+        clearAllSearches()
+        (activity as MainActivity).onBackPressed()
     }
 
 }
