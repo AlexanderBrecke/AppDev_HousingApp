@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">HousingApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="price">Price:</string>
+    <string name="filter">Filter</string>
+    <string name="from">From:</string>
+    <string name="to">To:</string>
+    <string name="amenities">Amenities:</string>
+    <string name="housingType">Housing type:</string>
+    <string name="welcome">Welcome!</string>
+    <string name="browse_housings">Browse housings</string>
+    <string name="houseListingTitle">Add a house listing</string>
+    <string name="image_url_can_be_left_empty">Image url (can be left empty)</string>
 </resources>

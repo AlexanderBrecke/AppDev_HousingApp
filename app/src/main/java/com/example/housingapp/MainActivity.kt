@@ -3,15 +3,16 @@ package com.example.housingapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.housingapp.fragments.HousingListFragment
 import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.Housing
 import com.example.housingapp.housing.HousingType
 import com.example.housingapp.housing.RentPayment
+import com.example.housingapp.views.CustomFilterBarLayout
+import com.example.housingapp.views.CustomHeaderBarLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,9 +35,11 @@ class MainActivity : AppCompatActivity() {
             RentPayment.Daily
     )
 
-
+    private lateinit var housingListFragment: HousingListFragment
 
     //Setting up some values for views.
+    private lateinit var headerBar:CustomHeaderBarLayout
+    private lateinit var filterBar:CustomFilterBarLayout
     private lateinit var containerView:FrameLayout
     private lateinit var welcomeView:TextView
     private lateinit var descriptionView:TextView
@@ -46,13 +49,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Hack in a way to show 5 house listings.
         for (i in 1..5){
-//            housingList.add(cabinInTheWoods)
             if(i % 2 == 0){
                 housingList.add(hotelRoom1)
             } else housingList.add(cabinInTheWoods)
-
         }
+
+        //Initialize the housing list fragment
+        housingListFragment = HousingListFragment(housingList)
+
+        //Initialize the header and filter bars
+        headerBar = CustomHeaderBarLayout(findViewById(R.id.mainHeaderBar))
+        headerBar.setTitle("Housing App")
+
+        filterBar = CustomFilterBarLayout(findViewById(R.id.filterBar), this, housingListFragment)
+        val dropDownAdapter = ArrayAdapter(this,android.R.layout.simple_spinner_item, HousingType.values())
+        filterBar.setDropDownAdapter(dropDownAdapter)
+
 
         //Initializing the views of main activity
         containerView = findViewById(R.id.container)
@@ -60,18 +74,15 @@ class MainActivity : AppCompatActivity() {
         descriptionView = findViewById(R.id.description_textView)
         browseButton = findViewById(R.id.browse_button)
 
-        //Setting up some logic for the browse button
-        browseButton.setOnClickListener {
+        setClickListeners()
 
-            //Make it hide all front-page views
-            showOrHideViews(listOf(welcomeView,descriptionView,browseButton), true)
+        //Set the housings list fragment to the container view so we have its functionality available
+        setFragment(housingListFragment,true)
+        //Then hide the container view
+        showOrHideViews(listOf(containerView), true)
 
-            //Show container view we will use to put fragments in
-            showOrHideViews(listOf(containerView),false)
-            //and then show the fragment.
-            showFragment(HousingListFragment(housingList),true)
 
-        }
+
 
     }
 
@@ -86,6 +97,24 @@ class MainActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+    //Create a function to set the click listeners
+    private fun setClickListeners(){
+        browseButton.setOnClickListener {
+
+            //Make it hide all front-page views
+            showOrHideViews(listOf(welcomeView,descriptionView,browseButton), true)
+
+            //Show container view we use to put fragments in
+            showOrHideViews(listOf(containerView),false)
+        }
+
+        headerBar.filterIconButton.setOnClickListener {
+            filterBar.view.isVisible = !filterBar.view.isVisible
+        }
+
+//
+    }
+
     //Create a function to show or hide a list of views.
     //This is made with the DRY (Don't Repeat Yourself) principle in mind
     private fun showOrHideViews(listToShowOrHide: List<View>, hide:Boolean){
@@ -97,11 +126,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     //Function to show selected fragment, and choose if it should be added to back-stack or not.
-    fun showFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
+    fun setFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
         if(addToBackStack){
             supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
         }
         else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
+    }
+
+    //simple way to clear filters from the main activity.
+    fun clearFilters(){
+        filterBar.clearFilter()
     }
 
 }

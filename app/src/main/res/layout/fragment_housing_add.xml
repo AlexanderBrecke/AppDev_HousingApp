@@ -8,11 +8,11 @@
 
 
     <TextView
-        android:id="@+id/title_textView"
+        android:id="@+id/addHouseTitle_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Add a house listing"
+        android:text="@string/houseListingTitle"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,21 +23,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
         android:ems="10"
         android:hint="Address"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_textView"
+        app:layout_constraintTop_toBottomOf="@+id/addHouseTitle_textView"
         app:layout_constraintEnd_toStartOf="@id/price_editTextNumber"
-        />
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/dropDown_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Housing type:"
+        android:text="@string/housingType"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/address_editText" />
@@ -54,21 +54,21 @@
         android:id="@+id/price_editTextNumber"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:layout_marginLeft="12dp"
+        android:layout_marginTop="32dp"
         android:ems="10"
-        android:hint="Price"
+        android:hint="@string/price"
         android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/address_editText"
-        app:layout_constraintTop_toBottomOf="@+id/title_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/addHouseTitle_textView" />
 
     <TextView
         android:id="@+id/amenitiesTitle_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Amenities"
+        android:text="@string/amenities"
         android:textAlignment="center"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:ems="10"
-            android:hint="Image url (can be left empty)"
+            android:hint="@string/image_url_can_be_left_empty"
             android:inputType="textPersonName" />
 
         <EditText
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:ems="10"
-            android:hint="Image url (can be left empty)"
+            android:hint="@string/image_url_can_be_left_empty"
             android:inputType="textPersonName" />
 
         <EditText

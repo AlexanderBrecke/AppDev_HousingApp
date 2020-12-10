@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import com.example.housingapp.Interfaces.ICreateNewListingListener
 import com.example.housingapp.housing.HousingType
 import com.example.housingapp.R
+import com.example.housingapp.extras.HelperClass
 import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.Housing
 import kotlinx.android.synthetic.main.fragment_housing_add.view.*
@@ -23,7 +24,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
     private lateinit var address:EditText
     private lateinit var price:EditText
     private lateinit var amenitiesTable:TableLayout
-    private var amenitiesCheckBoxList:MutableList<CheckBox> = mutableListOf()
+    private var amenitiesCheckBoxList = mutableListOf<CheckBox>()
     private var photos:MutableList<EditText> = mutableListOf()
 
     private lateinit var addButton: Button
@@ -42,7 +43,10 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
             photos.add(editText as EditText)
         }
 
-        setupAmenitiesTable(4)
+        //Use our abstract function to fill the amenities table with checkboxes.
+        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(requireContext(),amenitiesTable,Amenities.values() as Array<Enum<*>>,4,amenitiesCheckBoxList)
+
+//        setupAmenitiesTable(4)
 
         addButton = view.add_button
 
@@ -64,36 +68,26 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
 
         //Set an on click listener on the button
         addButton.setOnClickListener {
-            createNewListing()
+            tryCreateNewListing()
         }
 
     }
 
-    //Create function to fill the amenities table with checkboxes.
-    //Loop through all amenities in the Amenities enum.
-    //If the current index of the loop is the modulo of the max checkboxes per row, create a new table row.
-    //Create a checkbox for each amenity in the enum, set the text to be the name of the amenity.
-    //Add the checkbox to the amenities checkbox list for easy access.
-    //Add the checkbox to the table row for them to show in the UI.
-    private fun setupAmenitiesTable(maxCheckBoxesPerRow:Int){
-        var tableRow:TableRow? = null
-        for(i:Int in Amenities.values().indices){
-            if(i % maxCheckBoxesPerRow == 0){
-                tableRow= TableRow(context)
-                amenitiesTable.addView(tableRow)
-            }
-            var checkBox:CheckBox = CheckBox(context)
-            checkBox.text = Amenities.values()[i].name
-            amenitiesCheckBoxList.add(checkBox)
-
-            tableRow?.let{
-                tableRow.addView(checkBox)
-            }
+    //Create a function to clear the input info
+    private fun clearInputInfo(){
+        dropDown.setSelection(0)
+        address.text = null
+        price.text = null
+        for(amenityCheckBox in amenitiesCheckBoxList){
+            amenityCheckBox.isChecked = false
+        }
+        for(imageLink in photos){
+            imageLink.text = null
         }
     }
 
     //Create a function to create a new listing.
-    private fun createNewListing(){
+    private fun tryCreateNewListing(){
 
         //Setup the needed variables for creating a house listing
         var houseAddress:String? = null
@@ -115,7 +109,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         for(checkBox in amenitiesCheckBoxList){
             if(checkBox.isChecked){
                 for(amenity in Amenities.values()){
-                    if(amenity.name.toString().toLowerCase() == checkBox.text.toString().toLowerCase()){
+                    if(amenity.name.toLowerCase() == checkBox.text.toString().toLowerCase()){
                         houseAmenities.add(amenity)
                     }
                 }
@@ -130,9 +124,9 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
 
         //Check that all information needed is present to create a housing
         if(houseAddress != null && housePrice != null){
+            clearInputInfo()
             val newHousing = Housing(houseAddress,housePrice,housingType,houseAmenities,housePhotos)
             createNewListingListener.createNewListing(newHousing)
-            onDestroy()
         }
         //If not, tell the user that information is needed
         else Toast.makeText(context,"You need to fill in an address and a price",Toast.LENGTH_SHORT).show()
