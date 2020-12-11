@@ -49,8 +49,6 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
         HelperClass.setUpTableLayoutWithCheckboxesFromEnum(context,amenitiesTable,Amenities.values() as Array<Enum<*>>,2,amenitiesCheckBoxes)
 
         //Hack in a way to hide the filters until they have been chosen
-        startWithFiltersHidden()
-        //Set click listeners
         setClickListeners()
 
         //Set icon for the add and clear image views we use
@@ -68,27 +66,20 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
         filterByPrice.setOnCheckedChangeListener { buttonView, isChecked ->
             setPriceFilter(isChecked)
             showApplyAndClearButtons()
+            applyFilters()
         }
 
         filterByAmenities.setOnCheckedChangeListener { buttonView, isChecked ->
             setAmenitiesFilter(isChecked)
             showApplyAndClearButtons()
+            applyFilters()
         }
 
         filterByType.setOnCheckedChangeListener { buttonView, isChecked ->
             setHousingTypeFilter(isChecked)
             showApplyAndClearButtons()
+            applyFilters()
         }
-    }
-
-    //Create a hacky way to start the filter bar without all views showing
-    private fun startWithFiltersHidden(){
-        filterByPrice.isChecked = true
-        filterByPrice.isChecked = false
-        filterByAmenities.isChecked = true
-        filterByAmenities.isChecked = false
-        filterByType.isChecked = true
-        filterByType.isChecked = false
     }
 
     //Set click listeners to the images so we can get information to apply the filters or clear them

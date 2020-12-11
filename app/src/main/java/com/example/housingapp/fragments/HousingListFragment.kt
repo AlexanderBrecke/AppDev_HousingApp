@@ -54,10 +54,6 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         //Improved way of checking for text change without creating a text watcher
         searchBar.addTextChangedListener {
             searchInReferenceList(it.toString())
-//            updateReferenceList(getFilteredHousingsList(it.toString()))
-//            if(it.toString() != ""){
-//                test(mutableListOf())
-//            } else test(referenceHousingList)
         }
 
         //Initialize add button
@@ -109,13 +105,54 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
     //This should take a string as an input, and return a mutable list of housing objects
     //Go through the list of housings and check if the housing address contains the input
     //If it does, add the housing to the filtered list to return
-    private fun getFilteredHousingsList(stringToSearchFor: String):MutableList<Housing>{
-        var filteredList:MutableList<Housing> = mutableListOf()
-        for (housing in housings){
-            if(housing.address.contains(stringToSearchFor,true)) filteredList.add(housing)
+    private fun getFilteredHousingsList(fromPrice: Double?, toPrice: Double?, amenities: MutableList<Amenities>, housingType: HousingType?):MutableList<Housing>{
+        val updatedList = mutableListOf<Housing>()
+
+        for(housing in housings){
+            var shouldAddHousing:Boolean = false
+            var fromPriceOk:Boolean = false
+            var toPriceOk:Boolean = false
+            var housingTypeOk:Boolean = false
+            var amenitiesOk:Boolean = true
+
+            if(fromPrice != null){
+                if(housing.price >= fromPrice) fromPriceOk =  true
+            } else fromPriceOk = true
+
+            if(toPrice != null){
+                if(housing.price <= toPrice) toPriceOk = true
+            } else toPriceOk = true
+
+            if(housingType != null){
+                if(housing.type == housingType) housingTypeOk = true
+            } else housingTypeOk = true
+
+            if(amenities.isNotEmpty()){
+                for(amenity in amenities){
+                    if(!housing.amenities.contains(amenity)){
+                        amenitiesOk = false
+                        break
+                    }
+                }
+            }
+
+            if(fromPriceOk && toPriceOk && housingTypeOk && amenitiesOk) shouldAddHousing = true
+
+            if(shouldAddHousing){
+                updatedList.add(housing)
+            }
         }
-        return filteredList
+
+        return updatedList
     }
+
+//    private fun getFilteredHousingsList(stringToSearchFor: String):MutableList<Housing>{
+//        var filteredList:MutableList<Housing> = mutableListOf()
+//        for (housing in housings){
+//            if(housing.address.contains(stringToSearchFor,true)) filteredList.add(housing)
+//        }
+//        return filteredList
+//    }
 
     //Create a way to search the reference list for address
     //This should take a query string as an input and create a new filtered list.
@@ -167,11 +204,8 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
 
     //Using filter event listener interface to create a filtered list of housings.
     override fun filterEventListener(fromPrice: Double?, toPrice: Double?, amenities: MutableList<Amenities>, housingType: HousingType?) {
-
-        Toast.makeText(context,"Got filter info! fromPrice: $fromPrice",Toast.LENGTH_SHORT).show()
-        Toast.makeText(context,"Got filter info! toPrice: $toPrice",Toast.LENGTH_SHORT).show()
-        Toast.makeText(context,"Got filter info! amenities: $amenities",Toast.LENGTH_SHORT).show()
-        Toast.makeText(context,"Got filter info! housingType: ${housingType?.name}",Toast.LENGTH_SHORT).show()
+        updateReferenceList(getFilteredHousingsList(fromPrice,toPrice,amenities,housingType))
+        searchInReferenceList(searchBar.text.toString())
     }
 
 }
