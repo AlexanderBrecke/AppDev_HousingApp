@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.view.isVisible
 import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import com.example.housingapp.Interfaces.ICreateNewListingListener
@@ -13,13 +14,20 @@ import com.example.housingapp.R
 import com.example.housingapp.extras.HelperClass
 import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.Housing
+import com.example.housingapp.housing.RentPayment
 import kotlinx.android.synthetic.main.fragment_housing_add.view.*
+import org.w3c.dom.Text
 
 class HousingAddFragment(private val createNewListingListener: ICreateNewListingListener):Fragment() {
 
     //Setup some values we will use
-    private lateinit var dropDown:Spinner
+    private lateinit var housingTypesDropDown:Spinner
     private val housingTypes:MutableList<HousingType> = mutableListOf()
+
+    private lateinit var isRental:CheckBox
+    private lateinit var rentpaymentTitle:TextView
+    private lateinit var rentPaymentDropDown:Spinner
+    private val rentPayments:MutableList<RentPayment> = mutableListOf()
 
     private lateinit var address:EditText
     private lateinit var price:EditText
@@ -34,7 +42,10 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         val view = inflater.inflate(R.layout.fragment_housing_add,container,false)
 
         //Initialize what values we can from the view.
-        dropDown = view.dropDown_spinner
+        housingTypesDropDown = view.dropDown_spinner
+        isRental = view.addHousing_isRental_checkBox
+        rentpaymentTitle = view.addHousing_rentPerTitle_textView
+        rentPaymentDropDown = view.addHousing_rentPer_spinner
         address = view.address_editText
         price = view.price_editTextNumber
         amenitiesTable = view.amenities_tableLayout
@@ -44,7 +55,8 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         }
 
         //Use our abstract function to fill the amenities table with checkboxes.
-        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(requireContext(),amenitiesTable,Amenities.values() as Array<Enum<*>>,4,amenitiesCheckBoxList)
+        HelperClass.setUpTableLayoutFromEnum(requireContext(),amenitiesTable,"Checkbox",Amenities.values() as Array<Enum<*>>, 4,amenitiesCheckBoxList)
+//        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(requireContext(),amenitiesTable,Amenities.values() as Array<Enum<*>>,4,amenitiesCheckBoxList)
 
 //        setupAmenitiesTable(4)
 
@@ -56,26 +68,45 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
             housingTypes.add(type)
         }
 
+        //Add the rent types to the list
+        //we will be using these in the spinner adapter
+        for(rentType in RentPayment.values()){
+            rentPayments.add(rentType)
+        }
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Setup the adapter for the spinner and set it as the adapter
-        val dropDownAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_item, housingTypes)
-        dropDown.adapter = dropDownAdapter
+        //Setup the adapters for the spinners and set it as the adapter
+        val housingTypeDropDownAdapter = ArrayAdapter(requireContext(),android.R.layout.simple_spinner_item, housingTypes)
+        housingTypesDropDown.adapter = housingTypeDropDownAdapter
 
-        //Set an on click listener on the button
+        val rentPaymentDropDownAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, rentPayments)
+        rentPaymentDropDown.adapter = rentPaymentDropDownAdapter
+
+        //Set an on click listeners
+        setClickListeners()
+    }
+
+    private fun setClickListeners(){
+        isRental.setOnCheckedChangeListener { buttonView, isChecked ->
+            rentpaymentTitle.isVisible = isChecked
+            rentPaymentDropDown.isVisible = isChecked
+        }
+
         addButton.setOnClickListener {
             tryCreateNewListing()
         }
-
     }
 
     //Create a function to clear the input info
     private fun clearInputInfo(){
-        dropDown.setSelection(0)
+        housingTypesDropDown.setSelection(0)
+        rentPaymentDropDown.setSelection(0)
+        isRental.isChecked = false
         address.text = null
         price.text = null
         for(amenityCheckBox in amenitiesCheckBoxList){
@@ -92,6 +123,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         //Setup the needed variables for creating a house listing
         var houseAddress:String? = null
         var housePrice:Double?  = null
+        var rentPayment:RentPayment? = null
         var housingType:HousingType = HousingType.Room
         var houseAmenities:MutableList<Amenities> = mutableListOf()
         var housePhotos:MutableList<String> = mutableListOf()
@@ -101,8 +133,16 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         if(price.text.toString() != "") housePrice = price.text.toString().toDouble()
 
         for (type in housingTypes){
-            if(type.name.toLowerCase() == dropDown.selectedItem.toString().toLowerCase()){
+            if(type.name.toLowerCase() == housingTypesDropDown.selectedItem.toString().toLowerCase()){
                 housingType = type
+            }
+        }
+
+        if(isRental.isChecked){
+            for(rent in rentPayments){
+                if(rent.name.toLowerCase() == rentPaymentDropDown.selectedItem.toString().toLowerCase()){
+                    rentPayment = rent
+                }
             }
         }
 
@@ -125,7 +165,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         //Check that all information needed is present to create a housing
         if(houseAddress != null && housePrice != null){
             clearInputInfo()
-            val newHousing = Housing(houseAddress,housePrice,housingType,houseAmenities,housePhotos)
+            val newHousing = Housing(houseAddress,housePrice,housingType,houseAmenities,housePhotos, rentPayment)
             createNewListingListener.createNewListing(newHousing)
         }
         //If not, tell the user that information is needed

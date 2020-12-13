@@ -15,18 +15,18 @@ enum class HousingType{
 
 enum class Amenities{
     Electricity,
-    Heating,
     Water,
-    WiFi,
     Utilities,
+    Heating,
     Fireplace,
+    WiFi
 }
 
 enum class RentPayment{
-    Daily,
+    Night,
     Weekend,
-    Weekly,
+    Week,
     Fortnight,
-    Monthly,
-    Yearly
+    Month,
+    Year
 }

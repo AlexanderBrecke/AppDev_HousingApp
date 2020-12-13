@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/currentHousing_title_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="TextView"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.housingapp.extras.carouselview.CarouselView
+        android:id="@+id/pictures_recycleVIew"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="32dp"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" />
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/pictures_recycleVIew"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="250dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" />-->
+
+    <TextView
+        android:id="@+id/currentHousing_priceTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/price"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pictures_recycleVIew" />
+
+    <TextView
+        android:id="@+id/currentHousing_price_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentHousing_priceTitle_textView"
+        app:layout_constraintStart_toEndOf="@+id/currentHousing_priceTitle_textView" />
+
+    <TextView
+        android:id="@+id/currentHousing_priceRent_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentHousing_price_textView"
+        app:layout_constraintStart_toEndOf="@+id/currentHousing_price_textView"
+        app:layout_constraintTop_toTopOf="@+id/currentHousing_price_textView" />
+
+    <TextView
+        android:id="@+id/currentHousing_housingTypeTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/housingType"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="@+id/currentHousing_priceTitle_textView"
+        app:layout_constraintTop_toBottomOf="@+id/currentHousing_priceTitle_textView" />
+
+    <TextView
+        android:id="@+id/currentHousing_housingType_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentHousing_housingTypeTitle_textView"
+        app:layout_constraintStart_toEndOf="@+id/currentHousing_housingTypeTitle_textView" />
+
+    <TextView
+        android:id="@+id/currentHousing_amenitiesTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/amenities"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="@+id/currentHousing_housingTypeTitle_textView"
+        app:layout_constraintTop_toBottomOf="@+id/currentHousing_housingTypeTitle_textView" />
+
+    <TableLayout
+        android:id="@+id/currentHousing_amenitiesTable_tableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/currentHousing_housingType_textView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/currentHousing_amenitiesTitle_textView"
+        app:layout_constraintTop_toBottomOf="@+id/currentHousing_amenitiesTitle_textView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

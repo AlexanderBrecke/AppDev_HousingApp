@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -20,7 +21,6 @@ import com.example.housingapp.R
 import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.HousingType
 import com.example.housingapp.recycler.HousingListAdapter
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_housing_list.view.*
 
 class HousingListFragment(private val housings:MutableList<Housing>): Fragment(), IRecyclerViewEventListener, ICreateNewListingListener, IFilterEventListener {
@@ -32,6 +32,7 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
 
     //Create variables for the search bar and add house button
     private lateinit var searchBar:EditText
+    private lateinit var  searchBar2:SearchView
     private lateinit var addHousingButton: Button
 
     //Create a reference housing list that we can manipulate without losing data
@@ -39,6 +40,7 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
 
     //Create a value for the fragment to add houses
     private val housingAddFragment:HousingAddFragment = HousingAddFragment(this)
+
 
 
     //Initialize the fragment
@@ -146,14 +148,6 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         return updatedList
     }
 
-//    private fun getFilteredHousingsList(stringToSearchFor: String):MutableList<Housing>{
-//        var filteredList:MutableList<Housing> = mutableListOf()
-//        for (housing in housings){
-//            if(housing.address.contains(stringToSearchFor,true)) filteredList.add(housing)
-//        }
-//        return filteredList
-//    }
-
     //Create a way to search the reference list for address
     //This should take a query string as an input and create a new filtered list.
     //Loop through the reference list and add all housing objects with address containing the query string to a new list.
@@ -175,7 +169,7 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
     //Using the event listener interface for the recycler view override the on cell click listener
     //Here we want to go to a housing fragment showing the information of the clicked housing
     override fun onCellClickListener(housingList: MutableList<Housing>, position: Int) {
-        Toast.makeText(context,"Pressed ${housingList[position].address}", Toast.LENGTH_SHORT).show()
+        (activity as MainActivity).setFragment(HousingCurrentFragment(housingList[position]),true)
     }
 
     //Using the event listener interface for the recycler view override the on cell delete click listener.

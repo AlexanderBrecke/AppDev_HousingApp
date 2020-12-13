@@ -7,30 +7,19 @@
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:id="@+id/addHouseTitle_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/houseListingTitle"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
         android:id="@+id/address_editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="12dp"
+        android:autofillHints=""
         android:ems="10"
         android:hint="Address"
         android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addHouseTitle_textView"
         app:layout_constraintEnd_toStartOf="@id/price_editTextNumber"
-        android:autofillHints="" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/dropDown_textView"
@@ -50,18 +39,47 @@
         app:layout_constraintStart_toEndOf="@+id/dropDown_textView"
         app:layout_constraintTop_toTopOf="@+id/dropDown_textView" />
 
+    <CheckBox
+        android:id="@+id/addHousing_isRental_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:text="Is rental"
+        app:layout_constraintBottom_toBottomOf="@+id/dropDown_textView"
+        app:layout_constraintStart_toEndOf="@+id/dropDown_spinner"
+        app:layout_constraintTop_toTopOf="@+id/dropDown_textView" />
+
+    <TextView
+        android:id="@+id/addHousing_rentPerTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rent per:"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/addHousing_isRental_checkBox"
+        app:layout_constraintTop_toBottomOf="@+id/addHousing_isRental_checkBox" />
+
+    <Spinner
+        android:id="@+id/addHousing_rentPer_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/addHousing_rentPerTitle_textView"
+        app:layout_constraintStart_toEndOf="@+id/addHousing_rentPerTitle_textView"
+        app:layout_constraintTop_toTopOf="@+id/addHousing_rentPerTitle_textView" />
+
     <EditText
         android:id="@+id/price_editTextNumber"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="@string/price"
         android:inputType="numberDecimal"
+        app:layout_constraintBottom_toBottomOf="@+id/address_editText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/address_editText"
-        app:layout_constraintTop_toBottomOf="@+id/addHouseTitle_textView" />
+        app:layout_constraintTop_toTopOf="@+id/address_editText" />
 
     <TextView
         android:id="@+id/amenitiesTitle_textView"
@@ -73,7 +91,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dropDown_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/addHousing_rentPerTitle_textView" />
 
     <TableLayout
         android:id="@+id/amenities_tableLayout"

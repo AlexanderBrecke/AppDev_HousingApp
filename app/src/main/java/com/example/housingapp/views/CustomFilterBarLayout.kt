@@ -46,7 +46,8 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
         setFilterByCheckListeners()
 
         //Use our abstract function to fill the checkboxes needed for the amenities
-        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(context,amenitiesTable,Amenities.values() as Array<Enum<*>>,2,amenitiesCheckBoxes)
+        HelperClass.setUpTableLayoutFromEnum(context,amenitiesTable,"Checkbox",Amenities.values() as Array<Enum<*>>, 2,amenitiesCheckBoxes)
+//        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(context,amenitiesTable,Amenities.values() as Array<Enum<*>>,2,amenitiesCheckBoxes)
 
         //Hack in a way to hide the filters until they have been chosen
         setClickListeners()
