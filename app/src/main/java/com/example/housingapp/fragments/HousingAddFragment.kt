@@ -25,7 +25,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
     private val housingTypes:MutableList<HousingType> = mutableListOf()
 
     private lateinit var isRental:CheckBox
-    private lateinit var rentpaymentTitle:TextView
+    private lateinit var rentPaymentTitle:TextView
     private lateinit var rentPaymentDropDown:Spinner
     private val rentPayments:MutableList<RentPayment> = mutableListOf()
 
@@ -44,7 +44,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         //Initialize what values we can from the view.
         housingTypesDropDown = view.dropDown_spinner
         isRental = view.addHousing_isRental_checkBox
-        rentpaymentTitle = view.addHousing_rentPerTitle_textView
+        rentPaymentTitle = view.addHousing_rentPerTitle_textView
         rentPaymentDropDown = view.addHousing_rentPer_spinner
         address = view.address_editText
         price = view.price_editTextNumber
@@ -93,7 +93,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
 
     private fun setClickListeners(){
         isRental.setOnCheckedChangeListener { buttonView, isChecked ->
-            rentpaymentTitle.isVisible = isChecked
+            rentPaymentTitle.isVisible = isChecked
             rentPaymentDropDown.isVisible = isChecked
         }
 

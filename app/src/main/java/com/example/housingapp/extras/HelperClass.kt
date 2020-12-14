@@ -66,7 +66,6 @@ class HelperClass {
         }
 
 
-
         //Need to make an abstract function to create a gaussian scale.
 
         // Gaussian scale formulae: f(x) = a * exp( - ( (x-b)^2 / 2c^2 ) )
@@ -74,10 +73,10 @@ class HelperClass {
         // "f" defines a function
         // x is the variable
 
-        // a - magnitude of the bell curve (height of the peak) - how much we will multiply whatever we will scale
+        // a - magnitude of the bell curve (height of the peak) - The highest output of the scale
         // b - position of the center of the peak
         // c - width of the curve (standard deviation aka RMS width)
-        fun getGaussianScale(variable_x: Int, minScaleOffset: Float, magnitude_a:Float, centerPos_b:Float, width_c:Double):Float{
+        fun getGaussianScale(variable_x: Float, minScaleOffset: Float, magnitude_a:Float, centerPos_b:Float, width_c:Double):Float{
 
             return(
                     Math.E.pow(
@@ -88,6 +87,7 @@ class HelperClass {
                     ).toFloat()
 
         }
+
 
 
 

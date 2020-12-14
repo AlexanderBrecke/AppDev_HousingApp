@@ -1,13 +1,12 @@
 package com.example.housingapp.fragments
 
+import android.graphics.drawable.ScaleDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TableLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +24,9 @@ class HousingCurrentFragment(val housing:Housing):Fragment() {
     private lateinit var pictureRecyclerView: CarouselView
     private val pictureRecyclerAdapter:ImageScrollAdapter = ImageScrollAdapter()
 
+    private lateinit var currentImage:TableRow
+    private var currentImageList = mutableListOf<ImageView>()
+
     private lateinit var titleView: TextView
     private lateinit var priceView: TextView
     private lateinit var priceRentView:TextView
@@ -34,9 +36,20 @@ class HousingCurrentFragment(val housing:Housing):Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_housing,container, false)
 
+        currentImage = view.currentHousing_currentPicture_tableRow
+
+        for(item in housing.images){
+            var circleImage = ImageView(context)
+            var drawable = resources.getDrawable(R.drawable.ic_current_image)
+            circleImage.setImageDrawable(drawable)
+            currentImage.addView(circleImage)
+            currentImageList.add(circleImage)
+        }
+
         pictureRecyclerView = view.pictures_recycleVIew
-        pictureRecyclerView.initialize(pictureRecyclerAdapter)
+        pictureRecyclerView.initialize(pictureRecyclerAdapter, currentImage)
         pictureRecyclerAdapter.setData(housing.images)
+
 
         titleView = view.currentHousing_title_textView
         priceView = view.currentHousing_price_textView
@@ -59,12 +72,14 @@ class HousingCurrentFragment(val housing:Housing):Fragment() {
         priceRentView.text = convertRentPayment()
         typeView.text = "${housing.type}"
 
+
+
         HelperClass.setUpTableLayoutFromEnum(requireContext(),amenitiesTable,"text view",housing.amenities.toTypedArray() as Array<Enum<*>>, 2)
 
     }
 
     private fun convertRentPayment():String{
-        var rent:String = ""
+        var rent = ""
         var rentTypes = listOf(" / night", " / weekend", " / week", " / two weeks", " / month", " / year")
         if(housing.rentPayment != null){
             for(i:Int in RentPayment.values().indices){

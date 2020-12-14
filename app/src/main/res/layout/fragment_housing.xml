@@ -28,7 +28,9 @@
         android:overScrollMode="never"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" />
+        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" >
+
+    </com.example.housingapp.extras.carouselview.CarouselView>
 
 <!--    <androidx.recyclerview.widget.RecyclerView-->
 <!--        android:id="@+id/pictures_recycleVIew"-->
@@ -38,6 +40,15 @@
 <!--        app:layout_constraintEnd_toEndOf="parent"-->
 <!--        app:layout_constraintStart_toStartOf="parent"-->
 <!--        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" />-->
+
+    <TableRow
+        android:id="@+id/currentHousing_currentPicture_tableRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/pictures_recycleVIew"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
         android:id="@+id/currentHousing_priceTitle_textView"
