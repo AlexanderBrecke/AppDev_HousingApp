@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.example.housingapp.extras.carouselview.CarouselView
+    <com.example.housingapp.extras.carouselview.HorizontalView
         android:id="@+id/pictures_recycleVIew"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" >
 
-    </com.example.housingapp.extras.carouselview.CarouselView>
+    </com.example.housingapp.extras.carouselview.HorizontalView>
 
 <!--    <androidx.recyclerview.widget.RecyclerView-->
 <!--        android:id="@+id/pictures_recycleVIew"-->
@@ -42,7 +42,7 @@
 <!--        app:layout_constraintTop_toBottomOf="@+id/currentHousing_title_textView" />-->
 
     <TableRow
-        android:id="@+id/currentHousing_currentPicture_tableRow"
+        android:id="@+id/currentHousing_pictureIndicator_tableRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

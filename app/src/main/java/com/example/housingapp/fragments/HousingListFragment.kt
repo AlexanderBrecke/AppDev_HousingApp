@@ -103,10 +103,9 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         recyclerAdapter.notifyDataSetChanged()
     }
 
-    //Create a way to get a filtered list of housings.
-    //This should take a string as an input, and return a mutable list of housing objects
-    //Go through the list of housings and check if the housing address contains the input
-    //If it does, add the housing to the filtered list to return
+    //Create a way to get a filtered housing list using the filter values.
+    //We want to be able to filter using a to and from price, a list of amenities or housing type.
+    //If any of these are omitted they should simply not be used.
     private fun getFilteredHousingsList(fromPrice: Double?, toPrice: Double?, amenities: MutableList<Amenities>, housingType: HousingType?):MutableList<Housing>{
         val updatedList = mutableListOf<Housing>()
 

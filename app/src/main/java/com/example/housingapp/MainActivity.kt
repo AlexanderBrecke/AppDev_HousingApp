@@ -2,12 +2,10 @@ package com.example.housingapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.example.housingapp.extras.carouselview.CarouselView
 import com.example.housingapp.fragments.HousingAddFragment
 import com.example.housingapp.fragments.HousingCurrentFragment
 import com.example.housingapp.fragments.HousingListFragment
@@ -37,7 +35,8 @@ class MainActivity : AppCompatActivity() {
             listOf(Amenities.Electricity, Amenities.Water, Amenities.Heating, Amenities.WiFi),
             mutableListOf("https://www.movie-locations.com/movies/s/Shining-Timberline-Lodge.jpg",
                     "https://mir-s3-cdn-cf.behance.net/projects/404/ba140686487471.Y3JvcCw4MjMsNjQ0LDU0OCwyMTg.jpg",
-                    "https://d279m997dpfwgl.cloudfront.net/wp/2018/01/Shining_1980_20.jpg"
+                    "https://d279m997dpfwgl.cloudfront.net/wp/2018/01/Shining_1980_20.jpg",
+                    "https://www.nme.com/wp-content/uploads/2016/10/overlook-hotel.png"
             ),
             RentPayment.Night
     )

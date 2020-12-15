@@ -5,73 +5,80 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.TableRow
+import androidx.core.view.children
+import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housingapp.extras.HelperClass
+import com.example.housingapp.extras.indicator.Indicator
+import com.example.housingapp.recycler.ImageScrollAdapter
 
 //Make a carousel view class that extends from recycler view.
-class CarouselView(context: Context, attrs: AttributeSet? = null):RecyclerView(context, attrs) {
+class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView(context, attrs) {
 
-    val allViews = mutableListOf<View>()
+
+    private var allViews = mutableListOf<View>()
+    var firstView:Int = 0
+    var lastView:Int = 0
 
     //Make an initialization function.
     //It is of the type view holder, and takes a new adapter of the view holder type
-    fun<T:ViewHolder> initialize(newAdapter:Adapter<T>, currentImageTable:TableRow){
+    fun<T:ViewHolder> initialize(newAdapter:Adapter<T>, indicator: Indicator){
 
         //We want the recycler view to scroll horizontally instead of vertically
         //Set this in the layout manager
         layoutManager = LinearLayoutManager(context, HORIZONTAL,false)
 
-
         //Put a data observer on the adapter as we want to do some things if the data changes.
         newAdapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
             override fun onChanged() {
                 post {
-                    //Set padding to the items in the list
-                    pad()
-                    //Make a reference list to all views in the data set.
-                    //We will use this in the scaling later
-                    (0 until childCount).forEach{
-                        allViews.add(getChildAt(it))
-                    }
-                    //Make it scroll to the first image
-                    scrollToPosition(0)
+                    getAllViews()
+//                    scrollToPosition(0)
+                    onScrollChanged(indicator)
+
 
                     addOnScrollListener(object :OnScrollListener(){
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                             super.onScrolled(recyclerView, dx, dy)
-                            onScrollChanged(currentImageTable)
+
+                            onScrollChanged(indicator)
                         }
                     })
-
                 }
             }
         })
-
         //Set the adapter to the new adapter
         adapter = newAdapter
     }
+    private fun viewHasChanged():Boolean{
+        var viewHasChanged = false
+        var shouldBeFirstView = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        var shouldBeLastView = (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+//        Log.d("FOO", "First: $firstView, Last: $lastView")
+        if(firstView != shouldBeFirstView || lastView != shouldBeLastView){
+            firstView = shouldBeFirstView
+            lastView = shouldBeLastView
+            viewHasChanged = true
 
-    private fun pad(){
-        (0 until childCount).forEach{
-            //Make the padding 1/4 of the image size, so we get half the image size in spacing between images
-            val sidePadding = (getChildAt(it).width/4)
-            //Make the first image use twice the padding on the left so it is centered in the view,
-            //and do the same for the last image with the padding on the right.
-            when(it){
-                0 -> getChildAt(it).setPadding((sidePadding*2),0,sidePadding,0)
-                (childCount - 1) -> getChildAt(it).setPadding(sidePadding,0,(sidePadding*2),0)
-                else -> getChildAt(it).setPadding(sidePadding,0,sidePadding,0)
-            }
+        }
+        return viewHasChanged
+    }
+
+    private fun getAllViews(){
+        allViews.clear()
+        (0 until childCount).forEach {
+            allViews.add(getChildAt(it))
         }
     }
 
     //Function to run when scroll happens
-    private fun onScrollChanged(allCirclesInTable:TableRow){
-        setImagesGaussianScale(allCirclesInTable)
+    private fun onScrollChanged(indicator: Indicator){
+        if(viewHasChanged()) getAllViews()
+        setImagesGaussianScale(indicator)
     }
 
-    private fun setImagesGaussianScale(allCirclesInTable: TableRow){
+    private fun setImagesGaussianScale(indicator: Indicator){
         post{
             //We want to scale the items in the list according to a gaussian scale.
             //The gaussian scale gives us a bell curve with the center being bigger and the sides tapering off.
@@ -89,22 +96,23 @@ class CarouselView(context: Context, attrs: AttributeSet? = null):RecyclerView(c
                 //Then we will scale the child according to the value.
                 child.scaleX = scaleValue
                 child.scaleY = scaleValue
+
+                indicator.setIndicatorAnimations(allViews, 0.25f,0.75f, firstView,lastView)
             }
-            setCircleAnimations(allCirclesInTable)
         }
     }
 
-    private fun setCircleAnimations(allCirclesInTable: TableRow){
+    private fun setCircleAnimations(imageIndicatorTable: TableRow){
 
         //We want to scale the circles underneath the images according to what image is scaled up.
 
         //We will need to know how many steps we iterate through.
         //We set this to the count of images, or in this case count of circles in table as they have been programmed to be the same amount.
-        val steps = allCirclesInTable.childCount
+        val steps = imageIndicatorTable.childCount
 
         //In this case, we will need the scale of all the images in the form of a gaussian scale.
         //We will loop through all the circles in the table that represents all the images.
-        (0 until allCirclesInTable.childCount).forEach {
+        (0 until imageIndicatorTable.childCount).forEach {
 
             //We want to get a scale of the current image between 0 and 10.
             //We will use the x scale of the image at the index we are looking at and multiply it by 10 to get more fluctuation.
@@ -113,11 +121,12 @@ class CarouselView(context: Context, attrs: AttributeSet? = null):RecyclerView(c
             //In this case it is about 15, so we will set it to that.
             //We will then use the above mentioned steps as the spread of the curve.
             //Over the course of all the images, this will give us a curve of scales between 0 and 10
+//            val scaleX = if()
             val currentImageScale = HelperClass.getGaussianScale(allViews[it].scaleX*10, 0f,10f, 15f, steps.toDouble())
 
             //We will then want to scale the current circle according to the scale of the current image.
             //We will get a reference to the current circle so we can scale it.
-            val currentCircle = allCirclesInTable.getChildAt(it)
+            val currentCircle = imageIndicatorTable.getChildAt(it)
 
             //We will then create a scale value for said circle by using a new gaussian scale.
             //By inputting the previously created image scale as the variable,
