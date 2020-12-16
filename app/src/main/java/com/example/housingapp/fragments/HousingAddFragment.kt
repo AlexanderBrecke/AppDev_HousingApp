@@ -20,7 +20,7 @@ import org.w3c.dom.Text
 
 class HousingAddFragment(private val createNewListingListener: ICreateNewListingListener):Fragment() {
 
-    //Setup some values we will use
+    //Setup some values we will use in the fragment
     private lateinit var housingTypesDropDown:Spinner
     private val housingTypes:MutableList<HousingType> = mutableListOf()
 
@@ -49,6 +49,7 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         address = view.address_editText
         price = view.price_editTextNumber
         amenitiesTable = view.amenities_tableLayout
+        addButton = view.add_button
 
         for(editText in view.imageLinks){
             photos.add(editText as EditText)
@@ -56,20 +57,13 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
 
         //Use our abstract function to fill the amenities table with checkboxes.
         HelperClass.setUpTableLayoutFromEnum(requireContext(),amenitiesTable,"Checkbox",Amenities.values() as Array<Enum<*>>, 4,amenitiesCheckBoxList)
-//        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(requireContext(),amenitiesTable,Amenities.values() as Array<Enum<*>>,4,amenitiesCheckBoxList)
 
-//        setupAmenitiesTable(4)
-
-        addButton = view.add_button
-
-        //add the housing types to the list.
+        //add the housing types and rent types to their specified lists.
         //We will be using these in the adapter for the spinner
         for(type in HousingType.values()){
             housingTypes.add(type)
         }
 
-        //Add the rent types to the list
-        //we will be using these in the spinner adapter
         for(rentType in RentPayment.values()){
             rentPayments.add(rentType)
         }
@@ -87,11 +81,10 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         val rentPaymentDropDownAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, rentPayments)
         rentPaymentDropDown.adapter = rentPaymentDropDownAdapter
 
-        //Set an on click listeners
-        setClickListeners()
+        setClickAndCheckListeners()
     }
 
-    private fun setClickListeners(){
+    private fun setClickAndCheckListeners(){
         isRental.setOnCheckedChangeListener { buttonView, isChecked ->
             rentPaymentTitle.isVisible = isChecked
             rentPaymentDropDown.isVisible = isChecked
@@ -172,7 +165,5 @@ class HousingAddFragment(private val createNewListingListener: ICreateNewListing
         else Toast.makeText(context,"You need to fill in an address and a price",Toast.LENGTH_SHORT).show()
 
     }
-
-
 
 }

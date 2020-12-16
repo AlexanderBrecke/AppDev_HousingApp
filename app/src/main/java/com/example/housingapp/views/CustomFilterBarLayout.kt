@@ -43,14 +43,11 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
 
     init {
         //Setup listeners to filter by checkboxes
-        setFilterByCheckListeners()
+        setClickAndCheckCheckListeners()
 
         //Use our abstract function to fill the checkboxes needed for the amenities
         HelperClass.setUpTableLayoutFromEnum(context,amenitiesTable,"Checkbox",Amenities.values() as Array<Enum<*>>, 2,amenitiesCheckBoxes)
-//        HelperClass.setUpTableLayoutWithCheckboxesFromEnum(context,amenitiesTable,Amenities.values() as Array<Enum<*>>,2,amenitiesCheckBoxes)
 
-        //Hack in a way to hide the filters until they have been chosen
-        setClickListeners()
 
         //Set icon for the add and clear image views we use
         Picasso.get().load("https://www.freeiconspng.com/uploads/check-mark-31.png").into(addFilterButtonImage)
@@ -63,7 +60,7 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
     }
 
     //Create a function to set a listener to the checkboxes to see what user wants to filter by
-    private fun setFilterByCheckListeners(){
+    private fun setClickAndCheckCheckListeners(){
         filterByPrice.setOnCheckedChangeListener { buttonView, isChecked ->
             setPriceFilter(isChecked)
             showApplyAndClearButtons()
@@ -81,10 +78,7 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
             showApplyAndClearButtons()
             applyFilters()
         }
-    }
 
-    //Set click listeners to the images so we can get information to apply the filters or clear them
-    private fun setClickListeners(){
         addFilterButtonImage.setOnClickListener {
             applyFilters()
         }
@@ -153,14 +147,13 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
     //Here we will methodically go through all filter items.
     //First set them to null in case they are left empty,
     //or in the case of amenities an empty list.
-    //Then check if for each filter type. If it is chosen, set the item information.
+    //Then check each filter type. If it is chosen, set the item information.
     //When all information is gathered, use the filter event listener interface to
     //send the information to the housing list fragment.
     private fun applyFilters(){
 
         var priceFrom:Double? = null
         var priceTo:Double? = null
-
         if(filterByPrice.isChecked){
             priceFrom = fromPrice.text.toString().toDoubleOrNull()
             priceTo = toPrice.text.toString().toDoubleOrNull()
@@ -177,7 +170,6 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
             }
         }
 
-
         var housingType:HousingType? = null
         if(filterByType.isChecked){
             for(type in HousingType.values()){
@@ -190,7 +182,6 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
         filterEventListener.filterEventListener(priceFrom,priceTo,amenities,housingType)
     }
 
-
     //Create a way to clear all filters.
     fun clearFilter(){
         filterByPrice.isChecked = false
@@ -201,10 +192,7 @@ class CustomFilterBarLayout(val view: View, context:Context, private val filterE
         clearAmenitiesFilter()
         resetHousingTypeFilter()
 
-//        filterEventListener.filterEventListener(null,null, mutableListOf(),null)
         applyFilters()
     }
-
-
 
 }

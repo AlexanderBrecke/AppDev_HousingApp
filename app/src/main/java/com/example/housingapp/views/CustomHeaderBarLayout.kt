@@ -11,6 +11,7 @@ class CustomHeaderBarLayout(view: View){
     val filterIconButton: ImageView = view.headerBar_filterIcon_imageView
 
     init {
+        //Set an icon to the filter icon image view
         Picasso.get().load("https://www.freeiconspng.com/uploads/settings-icon-13.png").into(filterIconButton)
     }
 

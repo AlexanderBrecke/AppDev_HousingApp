@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -25,20 +24,17 @@ import kotlinx.android.synthetic.main.fragment_housing_list.view.*
 
 class HousingListFragment(private val housings:MutableList<Housing>): Fragment(), IRecyclerViewEventListener, ICreateNewListingListener, IFilterEventListener {
 
-    //Create variables for the recycler view, recycler adapter and recycler layout manager.
+    //Create a reference housing list that we can manipulate without loss of data
+    private var referenceHousingList = mutableListOf<Housing>()
+
+    //Setup some variables we will use in the fragment
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter:HousingListAdapter
     private lateinit var recyclerLayoutManager: RecyclerView.LayoutManager
 
-    //Create variables for the search bar and add house button
     private lateinit var searchBar:EditText
-    private lateinit var  searchBar2:SearchView
     private lateinit var addHousingButton: Button
 
-    //Create a reference housing list that we can manipulate without losing data
-    private var referenceHousingList = mutableListOf<Housing>()
-
-    //Create a value for the fragment to add houses
     private val housingAddFragment:HousingAddFragment = HousingAddFragment(this)
 
 
@@ -48,8 +44,6 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         val view = inflater.inflate(R.layout.fragment_housing_list,container,false)
 
         recyclerView = view.housing_list
-        
-        createReferenceHousingList()
 
         //Initialize search bar and add a way to listen for text change
         searchBar = view.addressSearch_textInputField
@@ -58,12 +52,10 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
             searchInReferenceList(it.toString())
         }
 
-        //Initialize add button
         addHousingButton = view.addHousing_button
-        //Set an on click listener to take you to the add housing fragment
-        addHousingButton.setOnClickListener {
-            (activity as MainActivity).setFragment(housingAddFragment, true)
-        }
+
+        setOnClickListeners()
+        createReferenceHousingList()
 
         return view
     }
@@ -79,6 +71,14 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         recyclerView.adapter = recyclerAdapter
         recyclerView.layoutManager = recyclerLayoutManager
 
+    }
+
+    //Simple function to set on click listeners
+    private fun setOnClickListeners(){
+        //Takes you to add house fragment
+        addHousingButton.setOnClickListener {
+            (activity as MainActivity).setFragment(housingAddFragment, true)
+        }
     }
 
     //Fill the reference housing list.
@@ -107,15 +107,20 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
     //We want to be able to filter using a to and from price, a list of amenities or housing type.
     //If any of these are omitted they should simply not be used.
     private fun getFilteredHousingsList(fromPrice: Double?, toPrice: Double?, amenities: MutableList<Amenities>, housingType: HousingType?):MutableList<Housing>{
+        //Create an empty list to add to
         val updatedList = mutableListOf<Housing>()
 
+        //Loop through all the housings in the original list
         for(housing in housings){
+            //Standard criteria to check against
             var shouldAddHousing:Boolean = false
             var fromPriceOk:Boolean = false
             var toPriceOk:Boolean = false
             var housingTypeOk:Boolean = false
             var amenitiesOk:Boolean = true
 
+            //If input has been given, do logic to figure if the current housing falls within the criteria.
+            //If input has not been given, criteria matches.
             if(fromPrice != null){
                 if(housing.price >= fromPrice) fromPriceOk =  true
             } else fromPriceOk = true
@@ -137,24 +142,27 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
                 }
             }
 
+            //If all criteria are met, we should add the housing.
             if(fromPriceOk && toPriceOk && housingTypeOk && amenitiesOk) shouldAddHousing = true
 
+            //Ask if we should add, and add if needed.
             if(shouldAddHousing){
                 updatedList.add(housing)
             }
         }
 
+        //Return the updated list.
         return updatedList
     }
 
     //Create a way to search the reference list for address
-    //This should take a query string as an input and create a new filtered list.
-    //Loop through the reference list and add all housing objects with address containing the query string to a new list.
+    //This should take a string as an input and create a new filtered list.
+    //Loop through the reference list and add all housing objects with address containing the string to a new list.
     //Set the data set of the recycler adapter to the new list and notify the adapter of the change.
-    private fun searchInReferenceList(queryText: String){
+    private fun searchInReferenceList(addressToSearchFor: String){
         val filteredList = mutableListOf<Housing>()
         for(housing in referenceHousingList){
-            if(housing.address.contains(queryText,true)) filteredList.add(housing)
+            if(housing.address.contains(addressToSearchFor,true)) filteredList.add(housing)
         }
         recyclerAdapter.dataset = filteredList
         recyclerAdapter.notifyDataSetChanged()
@@ -185,6 +193,7 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
 
     //Using event listener interface to create new listing from housing add fragment.
     //Here we will add the new listing to the original housings list.
+    //Make it clear any filters in place.
     //Make the function call back press, as it is being called from another fragment and we want to go back to the list fragment at this point.
     //Make it clear any searches in the list fragment.
     override fun createNewListing(newHousing: Housing) {

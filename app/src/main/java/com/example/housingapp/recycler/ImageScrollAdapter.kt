@@ -12,9 +12,8 @@ class ImageScrollAdapter():RecyclerView.Adapter<ImageScrollAdapter.ViewHolder>()
 
     private var dataset: MutableList<String> = mutableListOf()
     lateinit var context:Context
-//    var dataViewList = mutableListOf<View>()
-    var holderList:HashMap<Int, View> = HashMap()
 
+    // --- Standard adapter setup ---
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val listItem = CustomImageLayout(context)
@@ -24,14 +23,20 @@ class ImageScrollAdapter():RecyclerView.Adapter<ImageScrollAdapter.ViewHolder>()
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.listItem.setImage(dataset[position])
         padItems(holder.listItem, position)
-        if(!holderList.containsKey(position)) holderList.put(position,holder.listItem)
     }
 
     override fun getItemCount(): Int {
         return dataset.size
     }
+    // ---
 
-    //Hack in a padding on the items
+    //Hack to pad the items when they are bound.
+    //I did not find a better way to do this, and it feels a bit dirty
+    //We will measure the view, with unspecified specs.
+    //Then we will set the padding to 1/4 of the measured width.
+    //We will then set the padding to the left and right side of the view.
+    //If it is the first position, we will set twice the padding on the left side,
+    //and if it is the last, we will do the same but for the right side.
     private fun padItems(view:View, position: Int){
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         val sidePadding = (view.measuredWidth/4)
@@ -42,10 +47,9 @@ class ImageScrollAdapter():RecyclerView.Adapter<ImageScrollAdapter.ViewHolder>()
         }
     }
 
-    fun getViewByPosition(position: Int): View? {
-        return holderList[position]
-    }
-
+    //We will have a function to set the data set of the adapter.
+    //This is because we will now initialize the adapter from a custom class,
+    //and the custom class will do some logic when the data changes.
     fun setData(newData: MutableList<String>){
         dataset = newData
         notifyDataSetChanged()

@@ -19,7 +19,7 @@ class HousingListAdapter (
         context = parent.context
         val listItem = CustomHousingLayout(context)
 
-        //Describes how a generic cell is supposed to look
+        //Set the cell to match parent in width, and wrap content in height.
         listItem.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -29,8 +29,8 @@ class HousingListAdapter (
         return ViewHolder(listItem)
     }
 
+    //This runs for every item in the data set, apply code here to use the data and show information in each cell
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //This runs for every item in the data set, apply code here to use the data and show information in each cell
         holder.listItem.setAddress("Address: ${dataset[position].address}")
         holder.listItem.setPrice("Price: ${dataset[position].price}")
 
@@ -48,6 +48,14 @@ class HousingListAdapter (
             holder.listItem.setImage("https://www.freeiconspng.com/uploads/home-house-silhouette-icon-building--public-domain-pictures--20.png")
         }
 
+        setOnCLickListeners(holder,position)
+    }
+
+    override fun getItemCount(): Int {
+        return dataset.size
+    }
+
+    private fun setOnCLickListeners(holder:ViewHolder, position: Int){
         //Set on click listener on the card and send call to fragment
         holder.listItem.setOnClickListener{
             recyclerViewEventListener.onCellClickListener(dataset,position)
@@ -57,10 +65,6 @@ class HousingListAdapter (
         holder.listItem.crossImage.setOnClickListener{
             recyclerViewEventListener.onCellDeleteClickListener(dataset,position)
         }
-    }
-
-    override fun getItemCount(): Int {
-        return dataset.size
     }
 
     //This is the blueprint of a cell to be displayed in the recycler view

@@ -76,6 +76,18 @@ class HelperClass {
         // a - magnitude of the bell curve (height of the peak) - The highest output of the scale
         // b - position of the center of the peak
         // c - width of the curve (standard deviation aka RMS width)
+
+        //This function will take an input variable as a float - (x),
+        // a minimum scale offset as a float,
+        // a magnitude as a float - (a),
+        // a center position as a float - (b),
+        // as well as a width as a double - (c)
+
+        //Using these inputs, we will create a gaussian scale.
+        //The gaussian scale will use the (x) variable, and measure it against the (b) center position.
+        //Using the c width as a standard deviation, we will know how far the (x) variable is from the (b) center position
+        //The mathematical function will then return a float value (f(x)) between the minimum scale offset and (a) magnitude
+        // depending on how close the (x) variable is to the (b) center position.
         fun getGaussianScale(variable_x: Float, minScaleOffset: Float, magnitude_a:Float, centerPos_b:Float, width_c:Double):Float{
 
             return(

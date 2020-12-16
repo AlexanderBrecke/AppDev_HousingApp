@@ -1,22 +1,18 @@
-package com.example.housingapp.extras.carouselview
+package com.example.housingapp.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.widget.TableRow
-import androidx.core.view.children
-import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.housingapp.extras.HelperClass
 import com.example.housingapp.extras.indicator.Indicator
-import com.example.housingapp.recycler.ImageScrollAdapter
 
 //Make a carousel view class that extends from recycler view.
 class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView(context, attrs) {
 
-
+    //Keep a list of all visible views,
+    // as well as indicator to what adapter position is the first and last visible views.
     private var allViews = mutableListOf<View>()
     var firstView:Int = 0
     var lastView:Int = 0
@@ -33,10 +29,12 @@ class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView
         newAdapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
             override fun onChanged() {
                 post {
+                    //Make sure we have access to the visible views in our list
                     getAllViews()
-//                    scrollToPosition(0)
-                    onScrollChanged(indicator)
 
+                    //Run the on scroll changed function to make sure we access to the first and last views,
+                    // as well as scale the images from the start.
+                    onScrollChanged(indicator)
 
                     addOnScrollListener(object :OnScrollListener(){
                         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -51,11 +49,16 @@ class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView
         //Set the adapter to the new adapter
         adapter = newAdapter
     }
+
+    //The indicators need to know what is the first and last visible views.
+    //Let's make a function to see if the views have changed.
+    //It gets the first and last visible item positions from the layout manager
+    //Then it checks if the class variable matches this.
+    //If not, we set them to be the found values and return true
     private fun viewHasChanged():Boolean{
         var viewHasChanged = false
         var shouldBeFirstView = (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
         var shouldBeLastView = (layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-//        Log.d("FOO", "First: $firstView, Last: $lastView")
         if(firstView != shouldBeFirstView || lastView != shouldBeLastView){
             firstView = shouldBeFirstView
             lastView = shouldBeLastView
@@ -65,6 +68,8 @@ class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView
         return viewHasChanged
     }
 
+    //As we will hold a list of all visible views, we will also make a simple function to update the list.
+    //Simply put, if the views have changed, we will run this function to make sure our list is up to date.
     private fun getAllViews(){
         allViews.clear()
         (0 until childCount).forEach {
@@ -78,11 +83,13 @@ class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView
         setImagesGaussianScale(indicator)
     }
 
+    //Make a function to scale the images according to their position within the recycler view.
     private fun setImagesGaussianScale(indicator: Indicator){
         post{
             //We want to scale the items in the list according to a gaussian scale.
-            //The gaussian scale gives us a bell curve with the center being bigger and the sides tapering off.
+            //The gaussian scale gives us a bell curve with the center being bigger and the sides tapering off (To read more, see the Helper class)
             (0 until childCount).forEach{ position ->
+                //We will keep a reference to the current image's view, as well as the center of it and the recycler view.
                 val child = getChildAt(position)
                 val childCenterX = (child.left + child.right) / 2
                 val recyclerViewCenterX:Int = (left + right) / 2
@@ -93,55 +100,14 @@ class HorizontalView(context: Context, attrs: AttributeSet? = null):RecyclerView
                 //Then we will give the bell curve a width of 150.
                 val scaleValue = HelperClass.getGaussianScale(childCenterX.toFloat(),1f,0.5f,recyclerViewCenterX.toFloat(),150.0)
 
-                //Then we will scale the child according to the value.
+                //We will then scale the image according to the value.
                 child.scaleX = scaleValue
                 child.scaleY = scaleValue
 
-                indicator.setIndicatorAnimations(allViews, 0.25f,0.75f, firstView,lastView)
             }
+            //As we have indicators for what image is being viewed, we will also make sure to set the indicator animations.
+            indicator.setIndicatorAnimations(allViews,firstView,lastView)
         }
     }
-
-    private fun setCircleAnimations(imageIndicatorTable: TableRow){
-
-        //We want to scale the circles underneath the images according to what image is scaled up.
-
-        //We will need to know how many steps we iterate through.
-        //We set this to the count of images, or in this case count of circles in table as they have been programmed to be the same amount.
-        val steps = imageIndicatorTable.childCount
-
-        //In this case, we will need the scale of all the images in the form of a gaussian scale.
-        //We will loop through all the circles in the table that represents all the images.
-        (0 until imageIndicatorTable.childCount).forEach {
-
-            //We want to get a scale of the current image between 0 and 10.
-            //We will use the x scale of the image at the index we are looking at and multiply it by 10 to get more fluctuation.
-            //We will have an offset of 0 because we want to get an answer between 0 and 10, and for the same reason, our magnitude will be 10.
-            //The center position of the curve will be the highest scale we can get when we have multiplied the image scale by 10.
-            //In this case it is about 15, so we will set it to that.
-            //We will then use the above mentioned steps as the spread of the curve.
-            //Over the course of all the images, this will give us a curve of scales between 0 and 10
-//            val scaleX = if()
-            val currentImageScale = HelperClass.getGaussianScale(allViews[it].scaleX*10, 0f,10f, 15f, steps.toDouble())
-
-            //We will then want to scale the current circle according to the scale of the current image.
-            //We will get a reference to the current circle so we can scale it.
-            val currentCircle = imageIndicatorTable.getChildAt(it)
-
-            //We will then create a scale value for said circle by using a new gaussian scale.
-            //By inputting the previously created image scale as the variable,
-            //and setting the scale between 0.25 and 0.75, with the center position being the highest output of the image scale
-            //we should get a scale value for the currently viewed image between 0.25 and 1.
-            //We will use twice the number of steps for the width to not get a dramatic drop between the outputs.
-            val currentCircleScale = HelperClass.getGaussianScale(currentImageScale, 0.25f, 0.75f, 10f, steps.toDouble()*2)
-
-            //We will then use this value as the scale for the current circle.
-            currentCircle.scaleY = currentCircleScale
-            currentCircle.scaleX = currentCircleScale
-
-        }
-    }
-
-
 
 }

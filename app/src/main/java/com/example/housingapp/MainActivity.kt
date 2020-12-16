@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity() {
             RentPayment.Night
     )
 
+    //Setup some variables we will use in the activity
     private var currentFragment:Fragment? = null
     private lateinit var housingListFragment: HousingListFragment
 
-    //Setting up some values for views.
     private lateinit var headerBar:CustomHeaderBarLayout
     private lateinit var filterBar:CustomFilterBarLayout
     private lateinit var containerView:FrameLayout
@@ -63,20 +63,16 @@ class MainActivity : AppCompatActivity() {
             } else housingList.add(cabinInTheWoods)
         }
 
-//        var carouselView = CarouselView(this)
-
         //Initialize the housing list fragment
         housingListFragment = HousingListFragment(housingList)
 
         //Initialize the header and filter bars
         headerBar = CustomHeaderBarLayout(findViewById(R.id.mainHeaderBar))
 
-
-
+        //Initialize the filter bar
         filterBar = CustomFilterBarLayout(findViewById(R.id.filterBar), this, housingListFragment)
         val dropDownAdapter = ArrayAdapter(this,android.R.layout.simple_spinner_item, HousingType.values())
         filterBar.setDropDownAdapter(dropDownAdapter)
-
 
         //Initializing the views of main activity
         containerView = findViewById(R.id.container)
@@ -93,7 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        //Setup some extra logic, that if you press back when in list view it will take you back to the "front page" instead of exiting the app
+        //Setup some extra logic, that if you press back when in list view it will take you back to the "front page"
         if(supportFragmentManager.backStackEntryCount == 1){
             setFragment(housingListFragment,true)
             showOrHideViews(listOf(containerView), true)
@@ -145,16 +141,6 @@ class MainActivity : AppCompatActivity() {
         else fragmentHasChanged()
     }
 
-    //Function to show selected fragment, and choose if it should be added to back-stack or not.
-    fun setFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
-        if(addToBackStack){
-            supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
-        }
-        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
-        currentFragment = fragmentToShow
-        fragmentHasChanged()
-    }
-
     //Set the correct title according to what fragment we are on
     private fun fragmentHasChanged(){
         if(currentFragment is HousingListFragment){
@@ -166,6 +152,16 @@ class MainActivity : AppCompatActivity() {
         if(currentFragment is HousingCurrentFragment){
             headerBar.setTitle("Listing:")
         }
+    }
+
+    //Function to show selected fragment, and choose if it should be added to back-stack or not.
+    fun setFragment(fragmentToShow: Fragment, addToBackStack:Boolean){
+        if(addToBackStack){
+            supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).addToBackStack(null).commit()
+        }
+        else supportFragmentManager.beginTransaction().replace(R.id.container,fragmentToShow).commit()
+        currentFragment = fragmentToShow
+        fragmentHasChanged()
     }
 
     //simple way to clear filters from the main activity.
