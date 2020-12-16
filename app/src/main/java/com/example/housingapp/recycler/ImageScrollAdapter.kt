@@ -1,11 +1,9 @@
 package com.example.housingapp.recycler
 
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.housingapp.extras.indicator.Indicator
 import com.example.housingapp.views.CustomImageLayout
 
 class ImageScrollAdapter():RecyclerView.Adapter<ImageScrollAdapter.ViewHolder>() {

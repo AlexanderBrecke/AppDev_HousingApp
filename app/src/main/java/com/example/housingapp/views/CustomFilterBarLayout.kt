@@ -10,7 +10,6 @@ import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.HousingType
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.layout_custom_filter_bar.view.*
-import java.lang.reflect.Type
 
 class CustomFilterBarLayout(val view: View, context:Context, private val filterEventListener:IFilterEventListener){
 

@@ -1,7 +1,6 @@
 package com.example.housingapp.views
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -10,7 +9,6 @@ import android.widget.TextView
 import com.example.housingapp.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.layout_custom_housing.view.*
-import java.io.InputStream
 
 class CustomHousingLayout(context: Context, attributeSet: AttributeSet?=null):FrameLayout(context,attributeSet) {
 

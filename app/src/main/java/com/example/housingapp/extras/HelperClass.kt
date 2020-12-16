@@ -2,10 +2,7 @@ package com.example.housingapp.extras
 
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
-import androidx.core.view.marginStart
-import org.w3c.dom.Text
 import kotlin.math.pow
 
 class HelperClass {

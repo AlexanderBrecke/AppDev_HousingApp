@@ -10,4 +10,5 @@
     <string name="browse_housings">Browse housings</string>
     <string name="houseListingTitle">Add a house listing</string>
     <string name="image_url_can_be_left_empty">Image url (can be left empty)</string>
+    <string name="shared_pref_housings">sharedPrefHousings</string>
 </resources>

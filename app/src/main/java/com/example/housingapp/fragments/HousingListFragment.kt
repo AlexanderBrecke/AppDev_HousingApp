@@ -1,6 +1,7 @@
 package com.example.housingapp.fragments
 
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.example.housingapp.R
 import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.HousingType
 import com.example.housingapp.recycler.HousingListAdapter
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_housing_list.view.*
 
 class HousingListFragment(private val housings:MutableList<Housing>): Fragment(), IRecyclerViewEventListener, ICreateNewListingListener, IFilterEventListener {
@@ -48,9 +50,7 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         //Initialize search bar and add a way to listen for text change
         searchBar = view.addressSearch_textInputField
         //Improved way of checking for text change without creating a text watcher
-        searchBar.addTextChangedListener {
-            searchInReferenceList(it.toString())
-        }
+
 
         addHousingButton = view.addHousing_button
 
@@ -78,6 +78,10 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         //Takes you to add house fragment
         addHousingButton.setOnClickListener {
             (activity as MainActivity).setFragment(housingAddFragment, true)
+        }
+
+        searchBar.addTextChangedListener {
+            searchInReferenceList(it.toString())
         }
     }
 
@@ -173,6 +177,18 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
         searchBar.text = null
     }
 
+    private fun addOrRemoveHousingSharedPref(housingJson:String, add:Boolean){
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = sharedPref.edit()
+
+        //Get housings from sharedPref
+        val housings = sharedPref.getStringSet(getString(R.string.shared_pref_housings), setOf())?.toMutableList()
+        if(add) housings?.add(housingJson)
+        else housings?.remove(housingJson)
+        editor.putStringSet(getString(R.string.shared_pref_housings), housings?.toSet())
+        editor.commit()
+    }
+
     //Using the event listener interface for the recycler view override the on cell click listener
     //Here we want to go to a housing fragment showing the information of the clicked housing
     override fun onCellClickListener(housingList: MutableList<Housing>, position: Int) {
@@ -185,10 +201,17 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
     //Then search the reference list, as we still want the search to be active even if a housing was deleted.
     override fun onCellDeleteClickListener(housingList: MutableList<Housing>, position: Int) {
         val housingToRemove = housingList[position]
-        housings.remove(housingToRemove)
+//        housings.remove(housingToRemove)
+        val gson = Gson()
+        val housingToRemoveJson = gson.toJson(housingToRemove)
+
+        addOrRemoveHousingSharedPref(housingToRemoveJson, false)
+
         referenceHousingList.remove(housingToRemove)
         searchInReferenceList(searchBar.text.toString())
         Toast.makeText(context,"Deleted ${housingToRemove.address}", Toast.LENGTH_SHORT).show()
+
+        //Here we want logic to return mock data if the housings list is empty.
     }
 
     //Using event listener interface to create new listing from housing add fragment.
@@ -198,6 +221,12 @@ class HousingListFragment(private val housings:MutableList<Housing>): Fragment()
     //Make it clear any searches in the list fragment.
     override fun createNewListing(newHousing: Housing) {
         Toast.makeText(context,"Got new information about ${newHousing.address}", Toast.LENGTH_SHORT).show()
+
+        val gson = Gson()
+        val json = gson.toJson(newHousing)
+
+        addOrRemoveHousingSharedPref(json, true)
+
         housings.add(newHousing)
         (activity as MainActivity).clearFilters()
         (activity as MainActivity).onBackPressed()

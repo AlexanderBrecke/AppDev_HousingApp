@@ -11,8 +11,8 @@ import kotlin.math.max
 class Indicator(private val indicatorTable: TableRow) {
 
     private var dataSize: Int = 0
-    private var minScale:Float = 0.25f
-    private var maxScale:Float = 0.75f
+    private var minScale:Float = 0.33f
+    private var maxScale:Float = 0.5f
 
     //Make a function that retrieves the data size
     fun getDataSize():Int{
@@ -56,8 +56,7 @@ class Indicator(private val indicatorTable: TableRow) {
         while (i < steps){
             //Set an arbitrary scale-by value, and scale the indicator at the index of the iterator.
             //This is to get all indicators scaled even if there is no image at this index to scale by
-            //In this assignment, I have set it to 0.7, because that is a bit lower than the lowest scale we get when using the images.
-            var scaleBy = 0.7f
+            var scaleBy = minScale*(steps/2)
             var currentIndicator:View = indicatorTable[i]
             currentIndicator.scaleX = scaleBy
             currentIndicator.scaleY = scaleBy

@@ -2,6 +2,8 @@ package com.example.housingapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.view.isVisible
@@ -9,39 +11,21 @@ import androidx.fragment.app.Fragment
 import com.example.housingapp.fragments.HousingAddFragment
 import com.example.housingapp.fragments.HousingCurrentFragment
 import com.example.housingapp.fragments.HousingListFragment
-import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.Housing
 import com.example.housingapp.housing.HousingType
-import com.example.housingapp.housing.RentPayment
 import com.example.housingapp.views.CustomFilterBarLayout
 import com.example.housingapp.views.CustomHeaderBarLayout
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
 
-    private val housingList: MutableList<Housing> = mutableListOf()
-    private val cabinInTheWoods = Housing(
-            "Dark forest road 666",
-            666.666,
-            HousingType.Cabin,
-            listOf(Amenities.Electricity, Amenities.Water, Amenities.Fireplace),
-            mutableListOf("https://fanart.tv/fanart/movies/22970/moviebackground/the-cabin-in-the-woods-505e68fc36f67.jpg"),
-            RentPayment.Fortnight
-    )
+    private val mockData = mutableListOf<Housing>()
+    private val mock = MockData()
 
-    private val hotelRoom1 = Housing(
-            "27500 West Leg Road",
-            66.6,
-            HousingType.Room,
-            listOf(Amenities.Electricity, Amenities.Water, Amenities.Heating, Amenities.WiFi),
-            mutableListOf("https://www.movie-locations.com/movies/s/Shining-Timberline-Lodge.jpg",
-                    "https://mir-s3-cdn-cf.behance.net/projects/404/ba140686487471.Y3JvcCw4MjMsNjQ0LDU0OCwyMTg.jpg",
-                    "https://d279m997dpfwgl.cloudfront.net/wp/2018/01/Shining_1980_20.jpg",
-                    "https://www.nme.com/wp-content/uploads/2016/10/overlook-hotel.png"
-            ),
-            RentPayment.Night
-    )
 
     //Setup some variables we will use in the activity
+    private val housingList: MutableList<Housing> = mutableListOf()
+
     private var currentFragment:Fragment? = null
     private lateinit var housingListFragment: HousingListFragment
 
@@ -57,10 +41,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //Hack in a way to show 5 house listings.
-        for (i in 1..5){
-            if(i % 2 == 0){
-                housingList.add(hotelRoom1)
-            } else housingList.add(cabinInTheWoods)
+        mockData.add(mock.cabinInTheWoods)
+        mockData.add(mock.hotelRoom1)
+        mockData.add(mock.conjuringHouse)
+        mockData.add(mock.underTheGround)
+        mockData.add(mock.elmStret)
+
+        getHousingsInSharedPref(true)
+        if(housingList.isEmpty()){
+            addMockData()
+            getHousingsInSharedPref(true)
         }
 
         //Initialize the housing list fragment
@@ -88,9 +78,14 @@ class MainActivity : AppCompatActivity() {
         showOrHideViews(listOf(containerView),true)
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
+
     override fun onBackPressed() {
         //Setup some extra logic, that if you press back when in list view it will take you back to the "front page"
-        if(supportFragmentManager.backStackEntryCount == 1){
+        if(supportFragmentManager.backStackEntryCount == 1 && containerView.isVisible){
             setFragment(housingListFragment,true)
             showOrHideViews(listOf(containerView), true)
             showOrHideViews(listOf(welcomeView,descriptionView,browseButton), false)
@@ -99,10 +94,6 @@ class MainActivity : AppCompatActivity() {
         //Make sure it will still run normally
         super.onBackPressed()
 
-        //Set the current fragment to the correct one
-        currentFragment = supportFragmentManager.fragments[0]
-        //Make sure we show the right title.
-        viewsHaveChanged()
     }
 
     //Create a function to set the click listeners
@@ -152,6 +143,50 @@ class MainActivity : AppCompatActivity() {
         if(currentFragment is HousingCurrentFragment){
             headerBar.setTitle("Listing:")
         }
+    }
+
+    private fun getHousingsInSharedPref(allowDuplicate:Boolean){
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val sharedPrefHousings = sharedPref.getStringSet(getString(R.string.shared_pref_housings), setOf())
+        val gson = Gson()
+        housingList.clear()
+
+        sharedPrefHousings?.let {
+            for(house in it){
+                val housing  = gson.fromJson(house, Housing::class.java)
+                Log.d("FOO", "${housing.address}")
+
+                //If we want to not have duplicates
+                if(!allowDuplicate){
+                    var doesHousingExist = false
+                    for(housingInList in housingList){
+                        if(housingInList == housing){
+                            doesHousingExist = true
+                        }
+                    }
+                    if(!doesHousingExist) housingList.add(housing)
+                }else{
+                    housingList.add(housing)
+                }
+            }
+        }
+    }
+
+    private fun addMockData(){
+
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        val editor = sharedPref.edit()
+        val gson = Gson()
+
+        //Get housings from sharedPref
+        val housings = sharedPref.getStringSet(getString(R.string.shared_pref_housings), setOf())?.toMutableList()
+        for(mock in mockData){
+            val housingJson = gson.toJson(mock)
+            housings?.add(housingJson)
+        }
+        editor.putStringSet(getString(R.string.shared_pref_housings), housings?.toSet())
+        editor.commit()
+
     }
 
     //Function to show selected fragment, and choose if it should be added to back-stack or not.

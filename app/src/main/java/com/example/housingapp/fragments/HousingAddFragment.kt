@@ -16,7 +16,6 @@ import com.example.housingapp.housing.Amenities
 import com.example.housingapp.housing.Housing
 import com.example.housingapp.housing.RentPayment
 import kotlinx.android.synthetic.main.fragment_housing_add.view.*
-import org.w3c.dom.Text
 
 class HousingAddFragment(private val createNewListingListener: ICreateNewListingListener):Fragment() {
 
